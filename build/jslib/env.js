@@ -25,6 +25,8 @@
         env = 'browser';
     } else if (typeof Components !== 'undefined' && Components.classes && Components.interfaces) {
         env = 'xpconnect';
+    } else if (Object.prototype.toString.call(window) === '[object GjsGlobal]') {
+        env = 'gjs';
     }
 
     define({
