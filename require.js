@@ -22,7 +22,9 @@ var requirejs, require, define;
         hasOwn = op.hasOwnProperty,
         ap = Array.prototype,
         apsp = ap.splice,
-        isBrowser = !!(typeof window !== 'undefined' && navigator && document),
+        // GJS has a back reference to global object which is also called 'window'
+        // but it have neither navigator nor document.
+        isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && document),
         isWebWorker = !isBrowser && typeof importScripts !== 'undefined',
         //PS3 indicates loaded and complete, but need to wait for complete
         //specifically. Sequence is 'loading', 'loaded', execution,
