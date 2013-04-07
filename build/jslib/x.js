@@ -229,6 +229,43 @@ var requirejs, require, define, xpcUtil;
                 }
             };
         }
+    } else if (typeof window !== 'undefined' && Object.prototype.toString.call(window) === '[object GjsGlobal]') {
+        env = 'gjs';
+
+        var GLib = imports.gi.GLib;
+        var Gio  = imports.gi.Gio;
+
+        readFile = function (path) {
+            var file = Gio.File.new_for_path(path),
+                contents = file.load_contents(null);
+            if (contents[0]) {
+                return contents[1].toString();
+            }
+            throw new Error('Can not read ' + path);
+        };
+
+        exec = function (string) {
+            return eval(string);
+        };
+
+        exists = function (fileName) {
+            return GLib.file_test(fileName, GLib.FileTest.EXISTS);
+        };
+
+        fileName = ARGV[0];
+
+        if (fileName && fileName.indexOf('-') === 0) {
+            commandOption = fileName.substring(1);
+            fileName = ARGV[1];
+        }
+
+        if (typeof console === 'undefined') {
+            console = {
+                log: function () {
+                    print.apply(undefined, arguments);
+                }
+            };
+        }
     }
 
     //INSERT require.js
@@ -252,6 +289,8 @@ var requirejs, require, define, xpcUtil;
 
     } else if (env === 'xpconnect') {
         //INSERT build/jslib/xpconnect.js
+    } else if (env === 'gjs') {
+        //INSERT build/jslib/gjs.js
     }
 
     //Support a default file name to execute. Useful for hosted envs
